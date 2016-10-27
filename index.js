@@ -10,6 +10,8 @@ let {
 
 let querystring = require('querystring');
 
+const SINGLE_JUMP_PREFIX = 'single://';
+
 let queryPager = (map = [], index) => {
     index = initDefaultPage(map, index);
 
@@ -45,6 +47,7 @@ let initDefaultPage = (map = [], index) => {
 
 let renderPage = (render, pageEnv, title) => {
     return Promise.resolve(render(pageEnv)).then((pageNode) => {
+        // TODO pager is the default container, make it configurable
         let pager = document.getElementById('pager');
         // unload old page
         removeChilds(pager);
@@ -59,6 +62,17 @@ let renderPage = (render, pageEnv, title) => {
  * pager: (url) => {title, render}
  */
 let router = (pager, pageEnv) => {
+    let listenFlag = false;
+
+    let switchPage = (render, pageEnv, title) => {
+        renderPage(render, pageEnv, title);
+
+        if (!listenFlag) {
+            listenPageSwitch();
+            listenFlag = true;
+        }
+    };
+
     let forward = (url) => {
         if (!window.history.pushState) {
             window.location.href = url;
@@ -71,7 +85,7 @@ let router = (pager, pageEnv) => {
         if (url !== window.location.href) {
             window.history.pushState(transitionData, title, url);
         }
-        return renderPage(render, pageEnv, title);
+        return switchPage(render, pageEnv, title);
     };
 
     let redirect = (url) => {
@@ -87,22 +101,32 @@ let router = (pager, pageEnv) => {
         if (url !== window.location.href) {
             window.history.replaceState(transitionData, title, url);
         }
-        return renderPage(render, pageEnv);
+        return switchPage(render, pageEnv);
     };
 
-    window.onpopstate = () => {
-        forward(window.location.href);
-    };
+    let listenPageSwitch = () => {
+        window.onpopstate = () => {
+            forward(window.location.href);
+        };
 
-    document.addEventListener('click', (e) => {
-        let target = e.target;
-        let url = target.getAttribute('href');
-        let prefix = 'single://';
-        if (url && url.indexOf(prefix) === 0) {
-            url = url.substring(prefix.length);
-            forward(url);
-        }
-    }, true);
+        document.addEventListener('click', (e) => {
+            let target = e.target;
+
+            // hack kabanery, TODO fix this hack
+            if (e.__stopPropagation) return;
+
+            while (target) {
+                if (target.getAttribute) { // document does not have getAttribute method
+                    let url = (target.getAttribute('href') || '').trim();
+                    if (url.indexOf(SINGLE_JUMP_PREFIX) === 0) {
+                        forward(url.substring(SINGLE_JUMP_PREFIX.length).trim());
+                        break;
+                    }
+                }
+                target = target.parentNode;
+            }
+        });
+    };
 
     return {
         forward,

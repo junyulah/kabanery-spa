@@ -23,5 +23,8 @@
   "dependencies": {
     "doming": "0.0.1",
     "kabanery": "^0.1.0"
+  },
+  "devDependencies": {
+    "webpack": "^1.13.3"
   }
 }
