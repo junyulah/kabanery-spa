@@ -55,6 +55,14 @@ let renderPage = (render, pageEnv, title) => {
         mount(pageNode, pager);
         pager.style = 'display:block;';
         document.title = title;
+
+        // hash location
+        if (window.location.hash) {
+            let item = document.getElementById(window.location.hash.substring(1));
+            if (item) {
+                window.scrollTo(0, item.offsetTop);
+            }
+        }
     });
 };
 
