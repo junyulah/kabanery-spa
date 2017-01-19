@@ -46,7 +46,7 @@ let initDefaultPage = (map = [], index) => {
 };
 
 let renderPage = (render, pageEnv, title) => {
-    return Promise.resolve(render(pageEnv)).then((pageNode) => {
+    return Promise.resolve(render(pageEnv, title)).then((pageNode) => {
         // TODO pager is the default container, make it configurable
         let pager = document.getElementById('pager');
         // unload old page
