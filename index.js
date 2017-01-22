@@ -133,6 +133,9 @@ let router = (pager, pageEnv) => {
                 }
                 target = target.parentNode;
             }
+
+            e.preventDefault();
+            e.stopPropagation();
         });
     };
 

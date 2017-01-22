@@ -1,6 +1,6 @@
 {
   "name": "kabanery-spa",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A SPA framework based on kabanery",
   "main": "index.js",
   "scripts": {
