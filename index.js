@@ -73,12 +73,14 @@ let router = (pager, pageEnv) => {
     let listenFlag = false;
 
     let switchPage = (render, pageEnv, title) => {
-        renderPage(render, pageEnv, title);
+        let ret = renderPage(render, pageEnv, title);
 
         if (!listenFlag) {
             listenPageSwitch();
             listenFlag = true;
         }
+
+        return ret;
     };
 
     let forward = (url) => {
