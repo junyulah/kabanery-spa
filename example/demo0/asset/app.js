@@ -59,7 +59,7 @@
 
 	let {
 	    router, queryPager
-	} = __webpack_require__(25);
+	} = __webpack_require__(26);
 
 	document.body.appendChild(n('div id="pager"'));
 
@@ -112,19 +112,28 @@
 	    n, svgn, bindPlugs
 	} = __webpack_require__(4);
 
+	let {
+	    parseArgs
+	} = __webpack_require__(5);
+
 	let plugs = __webpack_require__(14);
 
 	let view = __webpack_require__(18);
 
 	let mount = __webpack_require__(24);
 
+	let N = __webpack_require__(25);
+
 	module.exports = {
 	    n,
+	    N,
 	    svgn,
 	    view,
 	    plugs,
 	    bindPlugs,
-	    mount
+	    mount,
+
+	    parseArgs
 	};
 
 
@@ -363,6 +372,8 @@
 	 * basic types
 	 */
 
+	let truth = () => true;
+
 	let isUndefined = v => v === undefined;
 
 	let isNull = v => v === null;
@@ -391,6 +402,12 @@
 	};
 
 	let isPromise = v => v && typeof v === 'object' && typeof v.then === 'function' && typeof v.catch === 'function';
+
+	let isRegExp = v => v instanceof RegExp;
+
+	let isReadableStream = (v) => isObject(v) && isFunction(v.on) && isFunction(v.pipe);
+
+	let isWritableStream = v => isObject(v) && isFunction(v.on) && isFunction(v.write);
 
 	/**
 	 * check type
@@ -421,7 +438,7 @@
 	            let typeFun = types[i];
 	            let arg = arguments[i];
 	            if (typeFun && !typeFun(arg)) {
-	                throw new TypeError(`Argument type error. Arguments order ${i}. Argument is ${arg}.`);
+	                throw new TypeError(`Argument type error. Arguments order ${i}. Argument is ${arg}. function is ${fun}, args are ${arguments}.`);
 	            }
 	        }
 	        // result
@@ -553,6 +570,9 @@
 	    isNull,
 	    isUndefined,
 	    isFalsy,
+	    isRegExp,
+	    isReadableStream,
+	    isWritableStream,
 
 	    funType,
 	    any,
@@ -562,7 +582,8 @@
 	    or,
 	    not,
 	    mapType,
-	    listType
+	    listType,
+	    truth
 	};
 
 
@@ -1602,7 +1623,7 @@
 	        }
 	    };
 
-	    let initData = (obj) => {
+	    let initData = (obj = {}) => {
 	        data = generateData(obj, ctx);
 	        return data;
 	    };
@@ -2073,6 +2094,61 @@
 	'use strict';
 
 	let {
+	    n
+	} = __webpack_require__(4);
+
+	let {
+	    isArray, isFunction, isObject
+	} = __webpack_require__(7);
+
+	let {
+	    map
+	} = __webpack_require__(9);
+
+	module.exports = (...args) => {
+	    let tagName = args[0],
+	        attrs = {},
+	        childs = [];
+	    if (isArray(args[1])) {
+	        childs = args[1];
+	    } else if (isFunction(args[1])) {
+	        childs = [args[1]];
+	    } else {
+	        if (isObject(args[1])) {
+	            attrs = args[1];
+	            if (isArray(args[2])) {
+	                childs = args[2];
+	            } else if (isFunction(args[2])) {
+	                childs = [args[2]];
+	            }
+	        }
+	    }
+
+	    return (...params) => {
+	        let renderList = (list) => {
+	            return map(list, (viewer) => {
+	                if (isArray(viewer)) {
+	                    return renderList(viewer);
+	                } else if (isFunction(viewer)) {
+	                    return viewer(...params);
+	                } else {
+	                    return viewer;
+	                }
+	            });
+	        };
+
+	        return n(tagName, attrs, renderList(childs));
+	    };
+	};
+
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	let {
 	    removeChilds
 	} = __webpack_require__(21);
 
@@ -2080,7 +2156,7 @@
 	    mount
 	} = __webpack_require__(2);
 
-	let querystring = __webpack_require__(26);
+	let querystring = __webpack_require__(27);
 
 	const SINGLE_JUMP_PREFIX = 'single://';
 
@@ -2118,7 +2194,7 @@
 	};
 
 	let renderPage = (render, pageEnv, title) => {
-	    return Promise.resolve(render(pageEnv)).then((pageNode) => {
+	    return Promise.resolve(render(pageEnv, title)).then((pageNode) => {
 	        // TODO pager is the default container, make it configurable
 	        let pager = document.getElementById('pager');
 	        // unload old page
@@ -2127,22 +2203,51 @@
 	        mount(pageNode, pager);
 	        pager.style = 'display:block;';
 	        document.title = title;
+
+	        // hash location
+	        if (window.location.hash) {
+	            let item = document.getElementById(window.location.hash.substring(1));
+	            if (item) {
+	                window.scrollTo(0, item.offsetTop);
+	            }
+	        }
 	    });
 	};
 
 	/**
 	 * pager: (url) => {title, render}
 	 */
-	let router = (pager, pageEnv) => {
+	let router = (pager, pageEnv, {
+	    onSwitchPageStart,
+	    onSwitchPageFinished
+	} = {}) => {
 	    let listenFlag = false;
 
+	    /**
+	     * only entrance for switching pages
+	     */
 	    let switchPage = (render, pageEnv, title) => {
-	        renderPage(render, pageEnv, title);
+	        onSwitchPageStart && onSwitchPageStart(render, pageEnv, title);
+	        let ret = switchBetweenPages(render, pageEnv, title);
+
+	        Promise.resolve(ret).then((data) => {
+	            onSwitchPageFinished && onSwitchPageFinished(null, data);
+	        }).catch((err) => {
+	            onSwitchPageFinished && onSwitchPageFinished(err);
+	        });
+
+	        return ret;
+	    };
+
+	    let switchBetweenPages = (render, pageEnv, title) => {
+	        let ret = renderPage(render, pageEnv, title);
 
 	        if (!listenFlag) {
 	            listenPageSwitch();
 	            listenFlag = true;
 	        }
+
+	        return ret;
 	    };
 
 	    let forward = (url) => {
@@ -2190,7 +2295,11 @@
 	            while (target) {
 	                if (target.getAttribute) { // document does not have getAttribute method
 	                    let url = (target.getAttribute('href') || '').trim();
+	                    // matched
 	                    if (url.indexOf(SINGLE_JUMP_PREFIX) === 0) {
+	                        e.preventDefault();
+	                        e.stopPropagation();
+
 	                        forward(url.substring(SINGLE_JUMP_PREFIX.length).trim());
 	                        break;
 	                    }
@@ -2217,17 +2326,17 @@
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	exports.decode = exports.parse = __webpack_require__(27);
-	exports.encode = exports.stringify = __webpack_require__(28);
+	exports.decode = exports.parse = __webpack_require__(28);
+	exports.encode = exports.stringify = __webpack_require__(29);
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -2313,7 +2422,7 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.

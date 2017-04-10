@@ -69,10 +69,29 @@ let renderPage = (render, pageEnv, title) => {
 /**
  * pager: (url) => {title, render}
  */
-let router = (pager, pageEnv) => {
+let router = (pager, pageEnv, {
+    onSwitchPageStart,
+    onSwitchPageFinished
+} = {}) => {
     let listenFlag = false;
 
+    /**
+     * only entrance for switching pages
+     */
     let switchPage = (render, pageEnv, title) => {
+        onSwitchPageStart && onSwitchPageStart(render, pageEnv, title);
+        let ret = switchBetweenPages(render, pageEnv, title);
+
+        Promise.resolve(ret).then((data) => {
+            onSwitchPageFinished && onSwitchPageFinished(null, data);
+        }).catch((err) => {
+            onSwitchPageFinished && onSwitchPageFinished(err);
+        });
+
+        return ret;
+    };
+
+    let switchBetweenPages = (render, pageEnv, title) => {
         let ret = renderPage(render, pageEnv, title);
 
         if (!listenFlag) {
