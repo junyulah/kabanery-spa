@@ -1,14 +1,14 @@
 'use strict';
 
 let {
-    n
+    n, mount
 } = require('kabanery');
 
 let {
     router, queryPager
 } = require('../../index.js');
 
-document.body.appendChild(n('div id="pager"'));
+mount(n('div id="pager"'), document.body);
 
 let {
     forward
