@@ -23,7 +23,7 @@
   "homepage": "https://github.com/LoveKino/kabanery-spa#readme",
   "dependencies": {
     "doming": "0.0.1",
-    "kabanery": "^0.1.8"
+    "kabanery": "^0.1.10"
   },
   "devDependencies": {
     "browser-js-env": "0.0.9",
