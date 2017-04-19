@@ -1,42 +1,42 @@
 {
-    "name": "kabanery-spa",
-    "version": "0.0.8",
-    "description": "A SPA framework based on kabanery\n[readme-lang:zh]一个基于kabanery的SPA框架",
-    "main": "index.js",
-    "scripts": {
-        "test": "mocha \"test/function/**/*.js\"",
-        "doc": "buildreadme -w"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/LoveKino/kabanery-spa.git"
-    },
-    "keywords": [
-        "SPA",
-        "kabanery"
-    ],
-    "author": "ddchen",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/LoveKino/kabanery-spa/issues"
-    },
-    "homepage": "https://github.com/LoveKino/kabanery-spa#readme",
-    "dependencies": {
-        "doming": "0.0.1",
-        "kabanery": "^0.1.6"
-    },
-    "devDependencies": {
-        "browser-js-env": "0.0.9",
-        "es6-promisify": "^5.0.0",
-        "mocha": "^3.2.0",
-        "readme-builder": "0.0.10",
-        "webpack": "^1.13.3"
-    },
-    "readmeDocOptions": {
-        "ignores": [
-            "**/*/node_modules/**/*",
-            "node_modules/**/*",
-            "test/**/*"
-        ]
-    }
+  "name": "kabanery-spa",
+  "version": "0.0.8",
+  "description": "A SPA framework based on kabanery\n[readme-lang:zh]一个基于kabanery的SPA框架",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha \"test/function/**/*.js\"",
+    "doc": "buildreadme -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LoveKino/kabanery-spa.git"
+  },
+  "keywords": [
+    "SPA",
+    "kabanery"
+  ],
+  "author": "ddchen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LoveKino/kabanery-spa/issues"
+  },
+  "homepage": "https://github.com/LoveKino/kabanery-spa#readme",
+  "dependencies": {
+    "doming": "0.0.1",
+    "kabanery": "^0.1.8"
+  },
+  "devDependencies": {
+    "browser-js-env": "0.0.9",
+    "es6-promisify": "^5.0.0",
+    "mocha": "^3.2.0",
+    "readme-builder": "0.0.10",
+    "webpack": "^1.13.3"
+  },
+  "readmeDocOptions": {
+    "ignores": [
+      "**/*/node_modules/**/*",
+      "node_modules/**/*",
+      "test/**/*"
+    ]
+  }
 }
