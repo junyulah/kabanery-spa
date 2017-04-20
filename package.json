@@ -1,6 +1,6 @@
 {
   "name": "kabanery-spa",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A SPA framework based on kabanery\n[readme-lang:zh]一个基于kabanery的SPA框架",
   "main": "index.js",
   "scripts": {
