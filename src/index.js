@@ -12,6 +12,8 @@ let querystring = require('querystring');
 
 const SINGLE_JUMP_PREFIX = 'single://';
 
+const CONTAINER_ID = 'pager';
+
 let queryPager = (map = [], index) => {
     index = initDefaultPage(map, index);
 
@@ -45,10 +47,10 @@ let initDefaultPage = (map = [], index) => {
     return index;
 };
 
-let renderPage = (render, pageEnv, title) => {
+let renderPage = (render, pageEnv, title, containerId) => {
     return Promise.resolve(render(pageEnv, title)).then((pageNode) => {
         // TODO pager is the default container, make it configurable
-        let pager = document.getElementById('pager');
+        let pager = document.getElementById(containerId);
         // unload old page
         removeChilds(pager);
         // add new page
@@ -71,7 +73,8 @@ let renderPage = (render, pageEnv, title) => {
  */
 let router = (pager, pageEnv, {
     onSwitchPageStart,
-    onSwitchPageFinished
+    onSwitchPageFinished,
+    containerId = CONTAINER_ID
 } = {}) => {
     let listenFlag = false;
 
@@ -92,7 +95,7 @@ let router = (pager, pageEnv, {
     };
 
     let switchBetweenPages = (render, pageEnv, title) => {
-        let ret = renderPage(render, pageEnv, title);
+        let ret = renderPage(render, pageEnv, title, containerId);
 
         if (!listenFlag) {
             listenPageSwitch();
@@ -102,7 +105,9 @@ let router = (pager, pageEnv, {
         return ret;
     };
 
-    let forward = (url) => {
+    let forward = (url, {
+        keepLocation
+    } = {}) => {
         if (!window.history.pushState) {
             window.location.href = url;
             return;
@@ -113,6 +118,9 @@ let router = (pager, pageEnv, {
 
         if (url !== window.location.href) {
             window.history.pushState(transitionData, title, url);
+        }
+        if (!keepLocation) {
+            window.scrollTo(0, 0);
         }
         return switchPage(render, pageEnv, title);
     };
@@ -167,7 +175,9 @@ let router = (pager, pageEnv, {
         forward,
         redirect,
         reload: () => {
-            return forward(window.location.href);
+            return forward(window.location.href, {
+                keepLocation: true
+            });
         }
     };
 };

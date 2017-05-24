@@ -19,7 +19,8 @@ let testFiles = {
     'base': path.join(__dirname, '../browser/case/base.js'),
     'changeUrl': path.join(__dirname, '../browser/case/changeUrl.js'),
     'jumpBySingleProtocol': path.join(__dirname, '../browser/case/jumpBySingleProtocol.js'),
-    'stopPropagation': path.join(__dirname, '../browser/case/stopPropagation.js')
+    'stopPropagation': path.join(__dirname, '../browser/case/stopPropagation.js'),
+    'location': path.join(__dirname, '../browser/case/location.js')
 };
 
 describe('spa:browser', () => {

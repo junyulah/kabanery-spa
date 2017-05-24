@@ -35,8 +35,8 @@
 ```js
 let spa = require('kabanery-spa')
 let {router, queryPager} = spa;
-let {n} = require('kabanery');
-document.body.appendChild(n('div id="pager"')); // pager as contauner
+let {n, mount} = require('kabanery');
+mount(n('div id="pager"'), document.body); // pager as contauner
 
 let {forward} = router(queryPager({
      'page1': {

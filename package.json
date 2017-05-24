@@ -1,6 +1,6 @@
 {
   "name": "kabanery-spa",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "A SPA framework based on kabanery\n[readme-lang:zh]一个基于kabanery的SPA框架",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,7 @@
   "devDependencies": {
     "browser-js-env": "0.0.9",
     "es6-promisify": "^5.0.0",
+    "jsenhance": "0.0.3",
     "mocha": "^3.2.0",
     "readme-builder": "0.0.10",
     "webpack": "^1.13.3"
