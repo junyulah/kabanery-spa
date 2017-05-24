@@ -139,25 +139,27 @@ let router = (pager, pageEnv, {
         };
 
         document.addEventListener('click', (e) => {
-            let target = e.target;
-
             // hack kabanery, TODO fix this hack
-            if (e.__stopPropagation) return;
+            setTimeout(() => {
+                let target = e.target;
+                // hack kabanery, TODO fix this hack
+                if (e.__stopPropagation) return;
 
-            while (target) {
-                if (target.getAttribute) { // document does not have getAttribute method
-                    let url = (target.getAttribute('href') || '').trim();
-                    // matched
-                    if (url.indexOf(SINGLE_JUMP_PREFIX) === 0) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                while (target) {
+                    if (target.getAttribute) { // document does not have getAttribute method
+                        let url = (target.getAttribute('href') || '').trim();
+                        // matched
+                        if (url.indexOf(SINGLE_JUMP_PREFIX) === 0) {
+                            e.preventDefault();
+                            e.stopPropagation();
 
-                        forward(url.substring(SINGLE_JUMP_PREFIX.length).trim());
-                        break;
+                            forward(url.substring(SINGLE_JUMP_PREFIX.length).trim());
+                            break;
+                        }
                     }
+                    target = target.parentNode;
                 }
-                target = target.parentNode;
-            }
+            });
         });
     };
 

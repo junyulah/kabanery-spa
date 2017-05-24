@@ -5,12 +5,12 @@ let {
 } = require('../../../');
 
 let {
-    n
+    n, mount
 } = require('kabanery');
 
 let assert = require('assert');
 
-document.body.appendChild(n('div id="pager"')); // pager as contauner
+mount(n('div id="pager"'), document.body); // pager as contauner
 
 let {
     forward
