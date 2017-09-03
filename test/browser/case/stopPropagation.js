@@ -44,7 +44,7 @@ module.exports = forward(window.location.href).then(() => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             try {
-                assert.equal(document.getElementById('pager').innerHTML, '<div href="single://?page=page2" style="background-color: blue"><div id="btn"></div></div>');
+                assert.equal(document.getElementById('pager').innerHTML, '<div href="single://?page=page2" style="background-color: blue;"><div id="btn"></div></div>');
             } catch (err) {
                 reject(err);
             }

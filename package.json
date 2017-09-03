@@ -1,10 +1,10 @@
 {
   "name": "kabanery-spa",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "A SPA framework based on kabanery\n[readme-lang:zh]一个基于kabanery的SPA框架",
   "main": "index.js",
   "scripts": {
-    "test": "mocha \"test/function/**/*.js\"",
+    "test": "mocha \"test/function/**/*.js\" -t 30000",
     "doc": "buildreadme -w"
   },
   "repository": {
@@ -23,7 +23,7 @@
   "homepage": "https://github.com/LoveKino/kabanery-spa#readme",
   "dependencies": {
     "doming": "0.0.1",
-    "kabanery": "^0.2.4"
+    "kabanery": "^0.2.13"
   },
   "devDependencies": {
     "browser-js-env": "0.0.9",
