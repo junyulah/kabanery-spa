@@ -8,7 +8,9 @@ let {
     mount
 } = require('kabanery');
 
-let querystring = require('querystring');
+let {
+    parse
+} = require('url');
 
 const SINGLE_JUMP_PREFIX = 'single://';
 
@@ -18,8 +20,8 @@ let queryPager = (map = [], index) => {
     index = initDefaultPage(map, index);
 
     return (url) => {
-        let qs = querystring.parse(url.split('?')[1] || '');
-        let pageName = qs.page || index;
+        let urlObject = parse(url, true);
+        let pageName = urlObject.query['page'] || index;
 
         return map[pageName];
     };
