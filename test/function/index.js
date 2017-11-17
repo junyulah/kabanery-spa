@@ -6,11 +6,27 @@ let fs = require('fs');
 let path = require('path');
 let readFile = promisify(fs.readFile);
 
+const puppeteer = require('puppeteer');
+
+const headlessOpen = async(url) => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url, {
+        waitUntil: 'networkidle2'
+    });
+    return {
+        kill: () => {
+            browser.close();
+        }
+    };
+};
+
 let runFileInBrowser = (file) => {
     return readFile(file).then((str) => {
         return browserJsEnv(str, {
             testDir: path.join(path.dirname(file), `../../__test/${path.basename(file)}`),
-            clean: true
+            clean: true,
+            open: headlessOpen
         });
     });
 };
