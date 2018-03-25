@@ -16,7 +16,7 @@ const SINGLE_JUMP_PREFIX = 'single://';
 
 const CONTAINER_ID = 'pager';
 
-let queryPager = (map = [], index) => {
+const queryPager = (map = [], index) => {
     index = initDefaultPage(map, index);
 
     return (url) => {
@@ -27,11 +27,11 @@ let queryPager = (map = [], index) => {
     };
 };
 
-let restPager = (map = [], index) => {
+const restPager = (map = [], index) => {
     index = initDefaultPage(map, index);
 
     return (url) => {
-        let pathname = url.split(/.*\:\/\//)[1];
+        let pathname = url.split(/.*:\/\//)[1];
         let pageName = pathname.split('/')[1];
         pageName = pageName || index;
 
@@ -39,7 +39,7 @@ let restPager = (map = [], index) => {
     };
 };
 
-let initDefaultPage = (map = [], index) => {
+const initDefaultPage = (map = [], index) => {
     if (index === null || index === undefined) {
         for (let name in map) {
             index = name;
@@ -49,7 +49,7 @@ let initDefaultPage = (map = [], index) => {
     return index;
 };
 
-let renderPage = (render, pageEnv, title, containerId) => {
+const renderPage = (render, pageEnv, title, containerId) => {
     return Promise.resolve(render(pageEnv, title)).then((pageNode) => {
         // TODO pager is the default container, make it configurable
         let pager = document.getElementById(containerId);
@@ -73,7 +73,7 @@ let renderPage = (render, pageEnv, title, containerId) => {
 /**
  * pager: (url) => {title, render}
  */
-let router = (pager, pageEnv, {
+const router = (pager, pageEnv, {
     onSwitchPageStart,
     onSwitchPageFinished,
     containerId = CONTAINER_ID
