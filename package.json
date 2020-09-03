@@ -30,7 +30,7 @@
     "es6-promisify": "^5.0.0",
     "jsenhance": "0.0.3",
     "mocha": "^5.2.0",
-    "puppeteer": "^0.13.0",
+    "puppeteer": "^1.13.0",
     "readme-builder": "0.0.10",
     "webpack": "^4.20.2"
   },
